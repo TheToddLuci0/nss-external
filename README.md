@@ -1,4 +1,4 @@
-# Gonss
+# nss-external
 
 ## About
 
@@ -9,7 +9,7 @@ If user matches suffix, then user is created with no password
 (not empty but password not allowed) and assign them to specified group.
 A home directory is also created.
 
-Reads its configuration from nss_external.conf
+Reads its configuration from `nss_external.conf`
 
 As no password is set, login as user must be allowed/forbidden by PAM
 modules/config (ssh key, custom auth, ...)
@@ -20,9 +20,14 @@ an existing user (with nss stuff) before calling PAM modules to check for
 auth, set session etc... So it means that users cannot be created
 dynamically on SSH session setup.
 
-## Build
+I yoinked and updated this to be used with SSH certificate auth, which has the
+issue of not working at all (not even calling PAM!) if the user doesn't exist.
 
-    CGO_CFLAGS="-g -O2 -D __LIB_NSS_NAME=external" go build --buildmode=c-shared -o libnss_external.so.2 nss-external.go
+## Install
+
+`wget 'https://github.com/TheToddLuci0/nss-external/releases/latest/download/libnss_external.so.2' -o /usr/lib/x86_64-linux-gnu/libnss_external.so.2`
+
+
 
 ## Config
 
@@ -42,6 +47,10 @@ Update /etc/nsswitch.conf
     passwd:         compat external
     group:          compat
     shadow:         compat external
+
+## Build
+
+`CGO_CFLAGS="-g -O2 -D __LIB_NSS_NAME=external" go build --buildmode=c-shared -o libnss_external.so.2 nss-external.go`
 
 ## License
 
